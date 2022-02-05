@@ -1,7 +1,9 @@
 use crate::*;
+use crate::types::time::Time;
 
 pub mod error;
 pub mod user;
+pub mod time;
 
 /// The query for redirecting the user to auth.monzo.com
 #[derive(Serialize, Deserialize, Debug)]
@@ -71,7 +73,7 @@ pub struct AccessTokenResponse {
 pub struct Account {
     pub id: String,
     pub closed: bool,
-    pub created: String, // TODO: change to a time type
+    pub created: Time, // TODO: change to a time type
     pub description: String,
     pub currency: String,
     pub country_code: String,
@@ -126,3 +128,4 @@ impl Balance {
         }
     }
 }
+
