@@ -1,7 +1,7 @@
 use crate::*;
 
-pub mod user;
 pub mod error;
+pub mod user;
 
 /// The query for redirecting the user to auth.monzo.com
 #[derive(Serialize, Deserialize, Debug)]
@@ -106,14 +106,14 @@ impl Balance {
     /// Returns a nicely formatted string for this balance (only works for GBP)
     pub fn balance_string(&self) -> String {
         self.prettify_minor_currency_units(self.balance)
-    }   
+    }
 
     /// Returns a nicely formatted string for this total_balance (only works for GBP)
     pub fn total_balance_string(&self) -> String {
         self.prettify_minor_currency_units(self.total_balance)
     }
 
-    /// Converts an integer of minor currency units to a string that may contain 
+    /// Converts an integer of minor currency units to a string that may contain
     /// some delimeter to separate major and minor units with a currency symbol
     fn prettify_minor_currency_units(&self, amount: i32) -> String {
         match self.currency.as_str() {
@@ -122,7 +122,7 @@ impl Balance {
                 let pence = amount - pounds * 100;
                 format!("£{}.{}", pounds, pence)
             }
-            _ => amount.to_string(),
+            _ => format!("{} {}", amount.to_string(), self.currency),
         }
-    } 
+    }
 }
