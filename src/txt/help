@@ -1,0 +1,11 @@
+A command-line tool for keeping track of your Monzo spending
+
+USAGE:
+    monzo [COMMAND] [OPTIONS]
+
+COMMANDS:
+    auth                 authorize this application to connect to your account
+    account              displays information about the connected account
+        --detailed       
+    balance              displays your balance in minor currency units
+        --detailed
