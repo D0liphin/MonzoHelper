@@ -1,0 +1,47 @@
+# Monzo Helper
+
+## `auth`
+
+Use this to update the authorization token, you will be notified when this is required.
+You might also not be notified when this is required... If things stop working, you probably
+just need to run `monzo auth` again.
+
+## `account`
+
+List details about the connected *profile*. Monzo makes a distinction between accounts and profiles.
+While most people will have one profile, with one account, with one owner, it is possible to have one
+profile with multiple accounts, each with multiple owners. At the moment, this is the only command
+that bothers with this distinction. It will list all accounts and all owners of those accounts. Other
+commands will not do this.
+
+### Options
+
+- `--detailed`: produces a more verbose output for this command
+
+### Example Output
+
+```
+$ monzo balance
+75000 JPY
+```
+
+## `balance`
+
+States the balance of the connected account.   
+Not all currencies are fully supported. For currencies that are not supported, minor currency units 
+will be printed, as well as the ISO 4217 currency code.
+
+### Options
+
+- `--detailed`: produces a more verbose output for this command
+
+### Example Output
+
+```
+$ monzo account
+
+ACCOUNT NUMBER: 35847686
+SORT CODE: 040004
+OWNERS: Oliver Iliffe
+
+```
