@@ -7,7 +7,7 @@ use warp::Filter;
 /// The `auth` command, aksi returns the `User` object and an authorized client
 pub async fn auth() -> Result<(types::user::User, reqwest::Client), types::error::AuthorizationError>
 {
-    let access_token_response = get_access_token(&reqwest::Client::new()).await.unwrap();
+    let access_token_response = get_access_token(&reqwest::Client::new()).await?;
     let client = client::new_client_with_authorization_header(&access_token_response.access_token);
 
     print!("\nAllow access to your data on the monzo app, then press enter...");
@@ -15,9 +15,7 @@ pub async fn auth() -> Result<(types::user::User, reqwest::Client), types::error
     let _ = std::io::stdin().read_line(&mut String::new());
     println!();
 
-    let user = types::user::User::new_from_access_token(&client, access_token_response)
-        .await
-        .unwrap();
+    let user = types::user::User::new_from_access_token(&client, access_token_response).await?;
     let _ = user_file::update_user_file(&user);
 
     Ok((user, client))

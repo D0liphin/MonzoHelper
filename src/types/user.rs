@@ -5,7 +5,7 @@ use crate::*;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {
     pub accounts: Vec<Account>,
-    pub access_token: String,
+    pub access_token: AccessToken,
     pub user_id: String,
 }
 
@@ -14,7 +14,10 @@ impl User {
         Self {
             accounts,
             user_id: access_token_response.user_id,
-            access_token: access_token_response.access_token,
+            access_token: AccessToken {
+                token: access_token_response.access_token,
+                expires: access_token_response.expires_in,
+            },
         }
     }
 
@@ -30,5 +33,12 @@ impl User {
     /// Creates an authorized `Client` from this `User` object
     pub fn create_authorized_client(&self) -> reqwest::Client {
         client::new_client_with_authorization_header(&self.access_token)
-    }   
+    }
+}
+
+/// Contains an access token as well as the timestamp at which the access token expires
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct AccessToken {
+    token: String,
+    expires: Time,
 }

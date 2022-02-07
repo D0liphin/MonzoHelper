@@ -9,19 +9,24 @@ async fn main() {
     if command.args.len() <= 1 {
         command.args.push("help".to_owned());
     }
-    if command.args[1] == "help" {
-        println!("{}", include_str!("../txt/help"));
-        return;
-    }
 
-    let (user, client) = ensure_authorized_user().await;
     match command.args[1].as_str() {
-        "account" => commands::account(&user, &command),
-        "balance" => commands::balance(&user, &client, &command),
+        "help" => {
+            println!("{}", include_str!("../txt/help"));
+            return;
+        }
         "auth" => {
             let _ = commands::auth().await;
+            return;
         }
-        _ => println!("ERROR: Unknown command, use `help` for a list of commands"),
+        command_ident => {
+            let (user, client) = ensure_authorized_user().await;
+            match command_ident {
+                "balance" => commands::balance(&user, &client, &command),
+                "account" => commands::account(&user, &command),
+                _ => println!("ERROR: Unknown command, use `help` for a list of commands"),
+            }
+        }
     }
 }
 
