@@ -1,18 +1,20 @@
 use crate::*;
 
 /// The `account` command
-pub fn account(user: &types::user::User, command: &cli::Command) {
+pub fn account(user: &types::user::User, command: &cli::Command) -> Result<(), Box<dyn std::error::Error>> {
     let detailed = command.args_set.contains("--detailed");
-    for account in &user.accounts {
+    for (account_index, account) in user.accounts.iter().enumerate() {
         let details = if detailed {
             let mut details = format!(
                 "\n\
+                ACCOUNT INDEX: [{}]\n\
                 CREATED: {}\n\
                 CURRENCY: {}\n\
                 ID: {}\n\n\
                 ACCOUNT NUMBER: {}\n\
                 SORT CODE: {}\n\n\
                 OWNERS: ",
+                account_index,
                 account.created,
                 account.currency,
                 account.id,
@@ -29,10 +31,11 @@ pub fn account(user: &types::user::User, command: &cli::Command) {
         } else {
             let mut details = format!(
                 "\n\
+                ACCOUNT INDEX: [{}]\n\
                 ACCOUNT NUMBER: {}\n\
                 SORT CODE: {}\n\
                 OWNERS: ",
-                account.account_number, account.sort_code,
+                account_index, account.account_number, account.sort_code,
             );
             for owner in &account.owners {
                 details.push_str(&format!("{}\n        ", owner.preferred_name))
@@ -41,4 +44,6 @@ pub fn account(user: &types::user::User, command: &cli::Command) {
         };
         println!("{}", details);
     }
+
+    Ok(())
 }

@@ -49,3 +49,50 @@ impl From<serde_qs::Error> for AuthorizationError {
         Self::SerdeQsError(e)
     }
 }
+
+#[derive(Debug)]
+pub struct InvalidArgumentError(pub String);
+
+impl fmt::Display for InvalidArgumentError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "invalid argument error: {}", self.0)
+    }
+}
+
+impl std::error::Error for InvalidArgumentError {}
+
+impl InvalidArgumentError {}
+
+#[derive(Debug)]
+pub struct BadArgumentError(pub String);
+
+impl fmt::Display for BadArgumentError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "bad argument error: {}", self.0)
+    }
+}
+
+impl std::error::Error for BadArgumentError {}
+
+impl BadArgumentError {}
+
+#[derive(Debug, Clone)]
+pub enum UserFileError {
+    InvalidOrAbsent,
+    Expired,
+}
+
+impl fmt::Display for UserFileError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "user file error: {}",
+            match self {
+                &UserFileError::Expired => "the user file has expired",
+                &UserFileError::InvalidOrAbsent => "the user file is invalid or absent",
+            }
+        )
+    }
+}
+
+impl std::error::Error for UserFileError {}

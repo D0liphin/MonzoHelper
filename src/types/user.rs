@@ -1,5 +1,4 @@
 use crate::types::*;
-use crate::*;
 
 /// A list of acccounts associated with a given user
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -16,7 +15,9 @@ impl User {
             user_id: access_token_response.user_id,
             access_token: AccessToken {
                 token: access_token_response.access_token,
-                expires: access_token_response.expires_in,
+                expires: Time::now().add(&chrono::Duration::seconds(
+                    access_token_response.expires_in as _,
+                )),
             },
         }
     }
@@ -32,13 +33,13 @@ impl User {
 
     /// Creates an authorized `Client` from this `User` object
     pub fn create_authorized_client(&self) -> reqwest::Client {
-        client::new_client_with_authorization_header(&self.access_token)
+        client::new_client_with_authorization_header(&self.access_token.token)
     }
 }
 
 /// Contains an access token as well as the timestamp at which the access token expires
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AccessToken {
-    token: String,
-    expires: Time,
+    pub token: String,
+    pub expires: Time,
 }

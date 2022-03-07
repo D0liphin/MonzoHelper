@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use monzo::types::user::User;
+use monzo::types::*;
 use monzo::*;
 
 #[tokio::main]
@@ -20,11 +20,26 @@ async fn main() {
             return;
         }
         command_ident => {
-            let (user, client) = ensure_authorized_user().await;
-            match command_ident {
+            let (user, client) = match ensure_authorized_user().await {
+                Ok(uc) => uc,
+                Err(e) => {
+                    println!("{}", e);
+                    return;
+                }
+            };
+
+            let res = match command_ident {
                 "balance" => commands::balance(&user, &client, &command),
                 "account" => commands::account(&user, &command),
-                _ => println!("ERROR: Unknown command, use `help` for a list of commands"),
+                "token" => commands::token(&user, &command),
+                _ => Err(error::BadArgumentError(format!(
+                    "invalid command `{}`, use `help` for a list of commands",
+                    command_ident
+                ))
+                .into()),
+            };
+            if let Err(e) = res {
+                println!("{}", e);
             }
         }
     }
@@ -32,20 +47,21 @@ async fn main() {
 
 /// Ensures that there is a valid user file present on this system (does not necessarily
 /// mean it has not expired)
-async fn ensure_authorized_user() -> (types::user::User, reqwest::Client) {
-    loop {
-        match user_file::load_user_file() {
-            Ok(user) => {
-                let client = user.create_authorized_client();
-                break (user, client);
-            }
-            Err(_) => {
-                println!("Could not load user file, please authorize this application");
-                if let Ok(user_client) = commands::auth().await {
-                    break user_client;
-                }
-                continue;
-            }
-        }
+async fn ensure_authorized_user() -> Result<(user::User, reqwest::Client), error::UserFileError> {
+    let user = match user_file::load_user_file() {
+        Ok(user) => user,
+        Err(_) => return Err(error::UserFileError::InvalidOrAbsent),
+    };
+
+    let now = time::Time::now();
+    if now >= user.access_token.expires {
+        println!(
+            "found an access token, but it expired -- please authorize this \
+            application again"
+        );
+        return Err(error::UserFileError::Expired);
     }
+    let client = user.create_authorized_client();
+
+    Ok((user, client))
 }

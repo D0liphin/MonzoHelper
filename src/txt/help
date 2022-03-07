@@ -9,3 +9,4 @@ COMMANDS:
         --detailed       
     balance              displays your balance in minor currency units
         --detailed
+    token                displays the expiration date of your authorization token

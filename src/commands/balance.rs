@@ -1,11 +1,11 @@
-use std::borrow::Borrow;
-
+use crate::types::*;
 use crate::*;
 
 /// Returns the balance of the account
 pub async fn get_balance(
     user: &types::user::User,
     client: &reqwest::Client,
+    account_index: usize,
 ) -> Result<types::Balance, Box<dyn std::error::Error>> {
     let balance = client
         .get(&format!(
@@ -22,14 +22,34 @@ pub async fn get_balance(
 }
 
 /// The `balance` command
-pub fn balance(user: &types::user::User, client: &reqwest::Client, command: &cli::Command) {
-    let balance = match pollster::block_on(get_balance(user, client)) {
-        Ok(balance) => balance,
-        Err(e) => {
-            println!("{}", e);
-            return;
+pub fn balance(
+    user: &types::user::User,
+    client: &reqwest::Client,
+    command: &cli::Command,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let account_index = if let Some(i) = command.kwargs.get("account") {
+        if let Ok(i) = i.parse::<usize>() {
+            if user.accounts.len() >= i - 1 {
+                i
+            } else {
+                return Err(error::BadArgumentError(format!(
+                    "the account index [{}] doest not exist for this user",
+                    i
+                ))
+                .into());
+            }
+        } else {
+            return Err(error::InvalidArgumentError(format!(
+                "kwarg `account` must be a valid integer, `{}` is not",
+                i
+            ))
+            .into());
         }
+    } else {
+        0
     };
+
+    let balance = pollster::block_on(get_balance(user, client, account_index))?;
 
     if command.args_set.contains("--detailed") {
         println!(
@@ -40,5 +60,7 @@ pub fn balance(user: &types::user::User, client: &reqwest::Client, command: &cli
         );
     } else {
         println!("{}", balance.balance_string());
-    }
+    };
+
+    Ok(())
 }

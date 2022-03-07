@@ -14,7 +14,7 @@ fn get_user_file_path() -> std::io::Result<std::path::PathBuf> {
 /// Updates the user.json file
 pub fn update_user_file(user: &types::user::User) -> std::io::Result<()> {
     let mut user_file = fs::File::create(get_user_file_path()?)?;
-    user_file.write_all(&serde_json::to_vec(user).expect("impossible error"))?;
+    user_file.write_all(&serde_json::to_vec(user).unwrap())?;
     Ok(())
 }
 
@@ -34,3 +34,4 @@ pub fn load_user_file() -> std::io::Result<types::user::User> {
         ))
     }
 }
+

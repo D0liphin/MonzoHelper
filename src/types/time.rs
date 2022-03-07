@@ -1,5 +1,6 @@
+use core::cmp;
 use serde::de::Visitor;
-use std::fmt;
+use std::{fmt, ops::AddAssign};
 
 #[derive(Clone)]
 pub struct Time(chrono::NaiveDateTime);
@@ -18,6 +19,19 @@ impl fmt::Display for Time {
 
 impl Time {
     const ISO_8601_FMT: &'static str = "%Y-%m-%dT%H:%M:%S%.fZ";
+
+    /// cosntruct a new `Time` that holds the time at which it was created
+    pub fn now() -> Self {
+        Time(chrono::Utc::now().naive_utc())
+    }
+
+    /// Construct a new `Time` that represents this time, with an additional
+    /// `duration` added on
+    pub fn add(&self, duration: &chrono::Duration) -> Self {
+        let mut time = self.clone();
+        time.0.add_assign(*duration);
+        time
+    }
 
     /// return the ISO 8601 formatted time for this `Time` object (only UTC)
     pub fn as_iso_8601_string(&self) -> String {
@@ -72,8 +86,20 @@ impl<'de> Visitor<'de> for TimeVisitor {
                 Err(e) => {
                     println!("{:?}\n{}", s, e);
                     return Err(E::custom("cannot parse time string"));
-                },
+                }
             },
         )
+    }
+}
+
+impl cmp::PartialEq for Time {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
+impl cmp::PartialOrd for Time {
+    fn partial_cmp(&self, other: &Self) -> Option<cmp::Ordering> {
+        self.0.partial_cmp(&other.0)
     }
 }
