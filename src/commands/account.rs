@@ -2,7 +2,7 @@ use crate::*;
 
 /// The `account` command
 pub fn account(user: &types::user::User, command: &cli::Command) -> Result<(), Box<dyn std::error::Error>> {
-    let detailed = command.args_set.contains("--detailed");
+    let detailed = command.args_set.contains("--detailed") || command.args_set.contains("-d");
     for (account_index, account) in user.accounts.iter().enumerate() {
         let details = if detailed {
             let mut details = format!(

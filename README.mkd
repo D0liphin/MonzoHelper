@@ -8,15 +8,11 @@ just need to run `monzo auth` again.
 
 ## `account`
 
-List details about the connected *profile*. Monzo makes a distinction between accounts and profiles.
-While most people will have one profile, with one account, with one owner, it is possible to have one
-profile with multiple accounts, each with multiple owners. At the moment, this is the only command
-that bothers with this distinction. It will list all accounts and all owners of those accounts. Other
-commands will not do this.
+List details about the connected *profile*. 
 
 ### Options
 
-- `--detailed`: produces a more verbose output for this command
+- `-d` | `--detailed`: produces a more verbose output for this command
 
 ### Example Output
 
@@ -33,7 +29,8 @@ will be printed, as well as the ISO 4217 currency code.
 
 ### Options
 
-- `--detailed`: produces a more verbose output for this command
+- `-d` | `--detailed`: produces a more verbose output for this command
+- `account=<account_id>`: set the account index (for profiles with more than one account)
 
 ### Example Output
 
@@ -45,3 +42,13 @@ SORT CODE: 040004
 OWNERS: Oliver Iliffe
 
 ```
+
+## `transactions` 
+
+Acquires transaction data for a specified account
+
+### Options
+
+- `-d` | `--detailed`: produces a more verbose output for this command
+- `account=<account_id>`: set the account index (for profiles with more than one account)
+- `since=<time>`: set the date 

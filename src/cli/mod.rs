@@ -2,6 +2,8 @@ use std::collections::{HashMap, HashSet};
 
 use lazy_static::lazy_static;
 
+use crate::types::error::BadArgumentError;
+
 /// Represents a parsed command
 pub struct Command {
     pub args: Vec<String>,
@@ -34,6 +36,27 @@ impl Command {
             args,
             args_set,
             kwargs,
+        }
+    }
+
+    /// tries to parse the speciifed kwarg into an int
+    /// returns None if the key is not present
+    /// returns Some(Ok(T)) if the key is present and the value for it can be
+    /// parsed as an int
+    /// returns Some(Err(E)) if the key is present and the value for ti cannot
+    /// be parsed as an int
+    pub fn uint_kwarg<T: From<u64>>(&self, key: &str) -> Option<Result<T, BadArgumentError>> {
+        if let Some(n_str) = self.kwargs.get(key) {
+            Some(if let Ok(n) = n_str.parse::<u64>() {
+                Ok(n.into())
+            } else {
+                Err(BadArgumentError(format!(
+                    "kwarg `{}` must be a valid integer, but `{}`, is not",
+                    key, n_str
+                )))
+            })
+        } else {
+            None
         }
     }
 }

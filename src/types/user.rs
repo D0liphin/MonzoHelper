@@ -6,6 +6,7 @@ pub struct User {
     pub accounts: Vec<Account>,
     pub access_token: AccessToken,
     pub user_id: String,
+    pub transactions: Vec<Transaction>,
 }
 
 impl User {
@@ -19,6 +20,7 @@ impl User {
                     access_token_response.expires_in as _,
                 )),
             },
+            transactions: Vec::new(),
         }
     }
 

@@ -1,9 +1,11 @@
-use crate::*;
+use std::collections::HashMap;
+
 use crate::types::time::Time;
+use crate::*;
 
 pub mod error;
-pub mod user;
 pub mod time;
+pub mod user;
 
 /// The query for redirecting the user to auth.monzo.com
 #[derive(Serialize, Deserialize, Debug)]
@@ -129,3 +131,36 @@ impl Balance {
     }
 }
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Transaction {
+    account_balance: Option<i32>,
+    amount: i32,
+    created: Time,
+    currency: String,
+    description: String,
+    id: String,
+    merchant: Option<Merchant>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Merchant {
+    address: Address,
+    created: Time,
+    group_id: String,
+    id: String,
+    logo: String,
+    emoji: String,
+    name: String,
+    category: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Address {
+    address: String,
+    city: String,
+    country: String,
+    latitude: f64,
+    longitude: f64,
+    postcode: String,
+    region: String,
+}

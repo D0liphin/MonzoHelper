@@ -1,5 +1,6 @@
 use std::io::Write;
 
+use monzo::commands::get_transactions;
 use monzo::types::*;
 use monzo::*;
 
@@ -38,6 +39,14 @@ async fn main() {
                 ))
                 .into()),
             };
+            let _ = pollster::block_on(get_transactions(
+                &user,
+                &client,
+                Some(time::Time::now().add(&chrono::Duration::hours(-72))),
+                None,
+                0,
+            ))
+            .unwrap();
             if let Err(e) = res {
                 println!("{}", e);
             }

@@ -5,6 +5,7 @@ pub mod types;
 pub mod user_file;
 pub mod client;
 pub mod cli;
+pub mod tests;
 
 pub use const_format::{formatcp, concatcp};
 pub use serde_derive::{Deserialize, Serialize};
