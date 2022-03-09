@@ -33,20 +33,13 @@ async fn main() {
                 "balance" => commands::balance(&user, &client, &command),
                 "account" => commands::account(&user, &command),
                 "token" => commands::token(&user, &command),
+				"transactions" => commands::transactions(&user, &client, &command),
                 _ => Err(error::BadArgumentError(format!(
                     "invalid command `{}`, use `help` for a list of commands",
                     command_ident
                 ))
                 .into()),
             };
-            let _ = pollster::block_on(get_transactions(
-                &user,
-                &client,
-                Some(time::Time::now().add(&chrono::Duration::hours(-72))),
-                None,
-                0,
-            ))
-            .unwrap();
             if let Err(e) = res {
                 println!("{}", e);
             }

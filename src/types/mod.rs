@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::types::time::Time;
 use crate::*;
+use crate::util::FmtCurrencyOptions;
 
 pub mod error;
 pub mod time;
@@ -120,47 +121,74 @@ impl Balance {
     /// Converts an integer of minor currency units to a string that may contain
     /// some delimeter to separate major and minor units with a currency symbol
     fn prettify_minor_currency_units(&self, amount: i32) -> String {
-        match self.currency.as_str() {
-            "GBP" => {
-                let pounds = amount / 100;
-                let pence = amount - pounds * 100;
-                format!("£{}.{}", pounds, pence)
-            }
-            _ => format!("{} {}", amount.to_string(), self.currency),
-        }
+        util::fmt_currency(amount, &self.currency, &FmtCurrencyOptions::default())
     }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Transaction {
-    account_balance: Option<i32>,
-    amount: i32,
-    created: Time,
-    currency: String,
-    description: String,
-    id: String,
-    merchant: Option<Merchant>,
+    pub account_balance: Option<i32>,
+    pub amount: i32,
+    pub created: Time,
+    pub currency: String,
+    pub description: String,
+    pub id: String,
+    pub merchant: Option<Merchant>,
+    pub counterparty: Option<Counterparty>,
+    pub decline_reason: Option<String>,
+    pub metadata: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Merchant {
-    address: Address,
-    created: Time,
-    group_id: String,
-    id: String,
-    logo: String,
-    emoji: String,
-    name: String,
-    category: String,
+    pub address: Address,
+    pub created: Time,
+    pub group_id: String,
+    pub id: String,
+    pub logo: String,
+    pub emoji: String,
+    pub name: String,
+    pub category: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Counterparty {
+    pub account_number: Option<String>,
+    pub name: Option<String>,
+    pub sort_code: Option<String>,
+    pub user_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Address {
-    address: String,
-    city: String,
-    country: String,
-    latitude: f64,
-    longitude: f64,
-    postcode: String,
-    region: String,
+    pub address: String,
+    pub city: String,
+    pub country: String,
+    pub latitude: f64,
+    pub longitude: f64,
+    pub postcode: String,
+    pub region: String,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum OutputType {
+    Json,
+    Csv,
+    Display,
+}
+
+impl OutputType {
+    pub fn from_str(s: &str) -> Result<Self, error::InvalidArgumentError> {
+        Ok(match s {
+            "json" => Self::Json,
+            "csv" => Self::Csv,
+            "display" => Self::Display,
+            _ => {
+                return Err(error::InvalidArgumentError(format!(
+                    "`{}` is not a valid output format",
+                    s
+                )))
+            }
+        })
+    }
 }

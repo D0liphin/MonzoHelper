@@ -9,6 +9,7 @@ path = "src/bin/main.rs"
 [dependencies]
 chrono = "*"
 const_format = "*"
+csv = "*"
 lazy_static = "*"
 pollster = "*"
 regex = "*"

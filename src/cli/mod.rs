@@ -60,3 +60,67 @@ impl Command {
         }
     }
 }
+
+/// Represents a builder for creating ansi strings
+pub struct AnsiStringBuilder {
+    bold: bool,
+    foreground_color: Option<(u8, u8, u8)>,
+    strikethrough: bool,
+    s: String,
+}
+
+impl AnsiStringBuilder {
+    pub fn new() -> Self {
+        AnsiStringBuilder {
+            bold: false,
+            foreground_color: None,
+            strikethrough: false,
+            s: String::new(),
+        }
+    }
+
+    pub fn clear_all(&mut self) {
+        self.s.push_str("\x1b[0m");
+    }
+
+    pub fn set_foreground_color(mut self, r: u8, g: u8, b: u8) -> Self {
+        self.foreground_color = Some((r, g, b));
+        self
+    }
+
+    pub fn set_bold(mut self, set: bool) -> Self {
+        self.bold = set;
+        self
+    }
+
+    pub fn set_strikethrough(mut self, set: bool) -> Self {
+        self.strikethrough = set;
+        self
+    }
+
+    pub fn push_str(mut self, string: &str) -> Self {
+        let mut escape_codes = Vec::<String>::new();
+        if self.bold {
+            escape_codes.push("1".to_string());
+        }
+        if let Some(color) = self.foreground_color {
+            escape_codes.extend([
+                "38".to_string(),
+                "2".to_string(),
+                color.0.to_string(),
+                color.1.to_string(),
+                color.2.to_string(),
+            ]);
+        }
+        if self.strikethrough {
+            escape_codes.push("9".to_string());
+        }
+        self.s.push_str(&format!("\x1b[{}m{}", escape_codes.join(";"), string));
+        self.clear_all();
+        self
+    }
+
+    pub fn build(self) -> String {
+        self.s
+    }
+}

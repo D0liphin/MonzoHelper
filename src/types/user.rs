@@ -11,14 +11,16 @@ pub struct User {
 
 impl User {
     pub fn new(access_token_response: AccessTokenResponse, accounts: Vec<Account>) -> Self {
+        let now = Time::now();
         Self {
             accounts,
             user_id: access_token_response.user_id,
             access_token: AccessToken {
                 token: access_token_response.access_token,
-                expires: Time::now().add(&chrono::Duration::seconds(
+                expires: now.add(&chrono::Duration::seconds(
                     access_token_response.expires_in as _,
                 )),
+                created: now,
             },
             transactions: Vec::new(),
         }
@@ -44,4 +46,5 @@ impl User {
 pub struct AccessToken {
     pub token: String,
     pub expires: Time,
+    pub created: Time,
 }

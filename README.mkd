@@ -55,6 +55,7 @@ Acquires transaction data for a specified account
    not authorised in the last 5 minutes)
 - `before=<time>` set the date until which transactions should be returned (max `since+90d` if
    not authorised in the last 5 minutes)
+- `format=<format>` the format that this should be output, one of `json`, `csv` or `display` (default).
 
 #### Format of `<time>`
 
@@ -76,3 +77,4 @@ format. The relative time format should
 	- `T` = `2022-03-09T11:44:00.0Z`
 	- `t-5d` = `2022-03-04T11:44:00.0Z`
 	- `T + 10m` = `2022-03-09T11:54:00.0Z`
+

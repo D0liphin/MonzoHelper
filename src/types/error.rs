@@ -7,6 +7,7 @@ pub enum AuthorizationError {
     ReqwestError(reqwest::Error),
     SerdeJsonError(serde_json::Error),
     SerdeQsError(serde_qs::Error),
+    Custom(String),
 }
 
 impl fmt::Display for AuthorizationError {
@@ -19,6 +20,7 @@ impl fmt::Display for AuthorizationError {
                 Self::ReqwestError(e) => e.to_string(),
                 Self::SerdeJsonError(e) => e.to_string(),
                 Self::SerdeQsError(e) => e.to_string(),
+                Self::Custom(s) => s.to_string(),
             }
         )
     }
