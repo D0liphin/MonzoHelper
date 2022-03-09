@@ -62,17 +62,17 @@ This replacement marker is for times. Times should be formatted either with this
 ISO 8601 format: `%Y-%m-%dT%H:%M:%S%.fZ` e.g. `2022-02-22T23:00:00.0Z` or using the relative time
 format. The relative time format should 
 
-	- Start with either `t` or `T`, this represents the current time
-	- It may then
-		- Contain an operator `+` or `-`
-		- followed by an unsigned integer e.g. `15`
-		- followed by a time specifier
-			- `W` or `w` for weeks
-			- `D` or `d` for days
-			- `H` or `h` for hours
-			- `M` or `m` for minutes
-			- `S` or `s` for seconds
-	- Examples (the current time is `2022-03-09T11:44:00.0Z`):
-	 	- `T` = `2022-03-09T11:44:00.0Z`
-		- `t-5d` = `2022-03-04T11:44:00.0Z`
-		- `T + 10m` = `2022-03-09T11:54:00.0Z`
+- Start with either `t` or `T`, this represents the current time
+- It may then
+	- Contain an operator `+` or `-`
+	- followed by an unsigned integer e.g. `15`
+	- followed by a time specifier
+		- `W` or `w` for weeks
+		- `D` or `d` for days
+		- `H` or `h` for hours
+		- `M` or `m` for minutes
+		- `S` or `s` for seconds
+- Examples (the current time is `2022-03-09T11:44:00.0Z`):
+	- `T` = `2022-03-09T11:44:00.0Z`
+	- `t-5d` = `2022-03-04T11:44:00.0Z`
+	- `T + 10m` = `2022-03-09T11:54:00.0Z`
